@@ -1,0 +1,38 @@
+{% extends "base.jinja" %}
+
+{% block title %}
+Sign Up
+{% endblock%}
+
+{% block content %}
+<div class="main-content">
+    <h1 class="title">Sign Up</h1>
+    <!-- Display Invalid Input message -->
+    {% if message %}
+    <p class="intro-text">{{ message }}</p>
+    {% endif %}
+    <form class="main-form"action="{{ url_for('signup') }}" method="POST">
+        <!-- Username Field -->
+        <label for="username">{{ form.username.label }}</label>
+        {{ form.username(id="username") }}
+        
+        <!-- Password Field -->
+        <label for="password">{{ form.password.label }}</label>
+        {{ form.password(id="password") }}
+        
+        <!-- Confirm Password Field -->
+        <label for="confirm_password">{{ form.confirm_password.label }}</label>
+        {{ form.confirm_password(id="confirm_password") }}
+        
+        {% if error %}
+        <p class="intro-text">{{ error[0] }}</p>
+        {% endif %}
+        
+        <!-- Submit Field -->
+        <button type="submit" class="submit-btn">Sign Up</button>
+        {{ form.csrf_token }}   
+    </form>
+    <p>or</p>
+    <a href="{{ url_for('login') }}" class="btn">Log In</a>
+</div>
+{% endblock %}

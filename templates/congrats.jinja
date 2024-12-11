@@ -1,0 +1,11 @@
+{% extends "base.jinja" %}
+
+{% block title %}
+Congratulations!
+{% endblock %}
+
+{% block content %}
+<h1 style="text-align: center;">Congratulations!<br>You have  made more than $1,000,000 before the deadline!<br>Thank you for playing!</h1>
+<img src="{{ url_for('static', filename='congrats.webp') }}" alt="Congratulations" style="display: block; margin: 0 auto;">
+{% endblock %}
+

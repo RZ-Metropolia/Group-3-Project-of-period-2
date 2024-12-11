@@ -1,0 +1,32 @@
+{% extends "base.jinja" %}
+
+{% block title %}
+Home - American Tycoon
+{% endblock %}
+
+{% block content %}
+    <div class="main-content">
+        <h1 class="title">American Tycoon</h1>
+        <div id="btns-wrapper">
+            <div class="btns-wrapper">
+                {% if not session['player_info'] %}
+                    <a href="{{ url_for('login') }}" class="btn">Log In</a>
+                    <a href="{{ url_for('signup') }}" class="btn">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+        {% if session['player_info'] %}
+            <img src="{{ url_for('static', filename='tycoon.webp') }}" alt="Introduction" style="width: 350px;">
+            <h2 class="subtitle">Introduction</h2>
+            <p class="intro-text">
+                You are an amateur merchant who is ready to become the richest tycoon in the U.S.<br>
+                The first step of your commercial legend is to make more than <b>1,000,000 dollars</b> <br>during the next <b>15 days(360 hours)</b>.<br>
+                In the beginning of your journey, you will start at a random place with <br><b>10,000 dollars</b> as your initial capital.<br>
+                After that, you can freely buy or sell goods from local stores before the deadline.<br>
+                You can also choose to move up to 15 different places in the U.S.<br>
+                Be aware that travelling takes time which depends on the distance between <br>your current location and the destination.<br>
+                Good luck!
+            </p>
+        {% endif %}
+    </div>
+{% endblock %}

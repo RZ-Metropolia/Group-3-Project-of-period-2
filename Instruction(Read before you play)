@@ -1,0 +1,5 @@
+1. Please run the project.sql script to import the "project" database into your database management system.
+2. Modify the connection variable in the models.py according to your local database setup
+3. Make sure you have all the required packages installed 
+4. Run the app.py
+5. Open your browser and input the http://localhost:port/ in your link bar, and press the enter button to enjoy the game

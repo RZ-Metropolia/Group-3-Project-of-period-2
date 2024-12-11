@@ -1,0 +1,54 @@
+{% extends "base.jinja" %}
+
+{% block title %}
+Buy - {{ session["player_info"]["current_airport"] }}
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <h1 class="title">Buy</h1>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+        <p class="intro-text">{{ message }}</p>
+        {% endfor %}
+      {% else %}
+        <p class="funds-display">You current funds is: ${{ session["player_info"]["current_funds"] }}</p>
+      {% endif %}
+    {% endwith %}
+
+    <table class="trade-table">
+        <thead>
+            <tr>
+                <th style="text-align: center;">ID</th>
+                <th style="text-align: center;">Name</th>
+                <th style="text-align: center;">Price</th>
+                <th style="text-align: center;">Stock</th>
+                <th style="text-align: center;">Quantity</th>
+                <th style="text-align: center;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for goods, form in paired_goods_forms %}
+            <form class="trade-form" action="{{ url_for('buy') }}" method="POST">
+                <tr>
+                    <td>{{ goods["id"] }}</td>
+                    <td>{{ goods["name"] }}</td>
+                    <td>${{ goods["price"] }}</td>
+                    <td>{{ goods["stock"] }}</td>
+                    
+                    {% if goods["stock"] > 0 %}
+                    {{ form.goods_id() }}
+                    <td>{{ form.number(min="1", max=goods["stock"], class="trade-input") }}</td>
+                    <td>{{ form.submit(class="trade-btn") }}</td>
+                    {% else %}
+                    <td colspan="2">Out of stock</td>
+                    {% endif %}
+                    {{ form.csrf_token }}
+                </tr>
+            </form>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

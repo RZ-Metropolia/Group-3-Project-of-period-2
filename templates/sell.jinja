@@ -1,0 +1,54 @@
+{% extends "base.jinja" %}
+
+{% block title %}
+Sell - {{ session["player_info"]["current_airport"] }}
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <h1 class="title">Sell</h1>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <p class="intro-text">{{ message }}</p>
+            {% endfor %}
+        {% else %}
+            <p class="funds-display">You current funds is: ${{ session["player_info"]["current_funds"] }}</p>
+        {% endif %}
+    {% endwith %}
+
+    {%  if not items %}
+        <p class="empty-message">You don't have anything to sell</p>
+    {% else %}
+    <table class="trade-table">
+        <thead>
+            <tr>
+                <th style="text-align: center;">ID</th>
+                <th style="text-align: center;">Name</th>
+                <th style="text-align: center;">Price</th>
+                <th style="text-align: center;">Stock</th>
+                <th style="text-align: center;">Quantity</th>
+                <th style="text-align: center;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for goods, form in paired_goods_forms %}
+            <form class="trade-form" action="{{ url_for('sell') }}" method="POST">
+                <tr>
+                    <td>{{ goods["id"] }}</td>
+                    <td>{{ goods["name"] }}</td>
+                    <td>${{ goods["price"] }}</td>
+                    <td>{{ goods["quantity"] }}</td>
+
+                    {{ form.goods_id() }}
+                    <td>{{ form.number(min="1", max=goods["quantity"], class="trade-input") }}</td>
+                    <td>{{ form.submit(class="trade-btn") }}</td>
+                    {{ form.csrf_token }}
+                </tr>
+            </form>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+{% endblock %}

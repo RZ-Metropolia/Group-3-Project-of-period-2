@@ -1,0 +1,103 @@
+{% extends "base.jinja" %}
+
+{% block title %}
+Travel
+{% endblock %}
+
+{% block content %}
+<div class="travel-container">
+<!-- Leaflet Map Container -->
+<div id="map" style="width: 90%; height: 500px; margin:20px auto;"></div>
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+
+<p style="text-align: center;">You have {{ session["player_info"]["time_left"] }} hours left.</p>
+<form id="travel-form" action="{{ url_for('travel') }}" method="post">
+    {{ form.submit(class="submit-btn", style="width: 80px;") }}
+    <div class="radioes-wrapper">
+    {% for airport in form.destination %}
+        <input type="radio" name="destination" value="{{ airport.data }}">
+        <label for="{{ airport.data }}">{{ airport.label }}</label>
+    {% endfor %}
+    </div>
+    {{ form.csrf_token }}
+</form>
+
+<script>
+const airports = {{ airports | tojson }};
+    let current_latitude = {{ session['player_info']['coordinates'][0] }};
+    let current_longitude = {{ session['player_info']['coordinates'][1] }};
+    let current_airport = "{{ session['player_info']['current_airport'] }}";
+
+    // Initialize the map and set its view to the player's coordinates
+    const map = L.map('map', {
+        center: [current_latitude, current_longitude],
+        zoom: 4,
+        minZoom: 3,
+        maxZoom: 6,
+    });
+
+    // Set up the OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Create a unique red icon to mark the player's current location
+    const redIcon = new L.Icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+            iconSize: [25, 41], 
+            iconAnchor: [12, 41],   
+            popupAnchor: [1, -34],   
+        });
+
+    // Add a marker at the player's current location
+    const name = "{{ session['player_info'].name }}"
+    const current_marker = L.marker([current_latitude, current_longitude], {icon: redIcon}).addTo(map)
+        .bindPopup(`<b>${ name }</b><br>Current Location:<br> ${ current_airport }`)
+        .openPopup();
+
+    // Initialize an object to store all the markers of other airports
+    const markers = {};
+    for (const airport of airports) {
+        if (airport.ident == "{{ session['player_info']['current_airport'] }}") {
+            continue;
+        } 
+        let latitude = airport["coordinates"][0]
+        let longitude = airport["coordinates"][1]
+        const marker = L.marker([latitude, longitude]).addTo(map)
+            .bindPopup(`<b>${ airport["name"] }</b><br>Travel Time: <i><b>${ airport["travel_time"] } hours</b></i>`)
+        markers[airport.ident] = marker;
+    
+        // Check the corresponding radio button when clicking on the marker
+        marker.addEventListener('click', () => {
+            const radio = document.querySelector(`input[name="destination"][value="${ airport.ident }"]`);
+            radio.checked = true;
+        });            
+    }
+
+    // Uncheck all radio buttons when clicking on the current location marker
+    current_marker.addEventListener('click', () => {
+        const allRadioes = document.querySelectorAll('input[type="radio"]');
+        allRadioes.forEach(radio => {
+            radio.checked = false;
+        });
+    });
+
+    // Popup the marker on the map when corresponding radio button is checked
+    const allRadioes = document.querySelectorAll('input[type="radio"]');
+    for (const radio of allRadioes) {
+        radio.addEventListener("click", () => {
+            const ident = radio.value;
+            markers[ident].openPopup()
+        });
+    }
+</script> 
+</div>
+
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "base.jinja" %}
+
+{% block title %}
+Game Over!
+{% endblock %}
+
+{% block content %}
+<h1 style="text-align: center;">You are running out of time!</h1>
+<img src="{{ url_for('static', filename='gameover.webp') }}" alt="Game Over" style="display: block; margin: 0 auto;">
+{% endblock %}
+

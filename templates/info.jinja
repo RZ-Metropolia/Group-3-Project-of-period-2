@@ -1,0 +1,75 @@
+{% extends "base.jinja" %}
+
+{% block title %}
+Info - {{ session["player_info"].name }}
+{% endblock %}
+
+
+{% block content %}
+<div class="main-content">
+    <h1 class="title">Info</h1>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+            <p class="intro-text">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="info-content">
+        <ul class="info-list">
+            <li class="info-item">ID: {{ session["player_info"].id }}</li>
+            <li class="info-item">Name: {{ session["player_info"].name }}</li>  
+            <li class="info-item">Current Location: {{ session["player_info"].current_airport }}</li>
+            <li class="info-item">Current Funds: ${{ session["player_info"].current_funds }}</li>
+            <li class="info-item">Time Left: {{ session["player_info"].time_left }} hours</li>
+        </ul>
+
+        <!-- Leaflet Map Container -->
+        <div id="map" class="map-container"></div>
+        <!-- Leaflet CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+            integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+            crossorigin=""/>
+        <!-- Leaflet JS -->
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+
+        <script>
+            // Retrieve coordinates from Flask and assign to JavaScript variables
+            const latitude = "{{ session["player_info"].coordinates[0] }}";
+            const longitude = "{{ session["player_info"].coordinates[1] }}";
+
+            // Initialize the map and set its view to the player's coordinates
+            const map = L.map('map', {
+                center: [latitude, longitude],
+                zoom: 4,
+                minZoom: 3,
+                maxZoom: 6,
+            });
+
+            // Set up the OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Create a unique red icon to mark the player's current location
+            const redIcon = new L.Icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],    
+                popupAnchor: [1, -34],   
+            });
+
+            // Add a marker at the player's location
+            const name = "{{ session["player_info"].name }}"
+            const airport = "{{ session["player_info"].current_airport }}"
+            L.marker([latitude, longitude], {icon: redIcon}).addTo(map)
+                .bindPopup(`<b>${ name }</b><br>Current Location:<br> ${ airport }`)
+                .openPopup();
+        </script> 
+        
+    </div>   
+</div>
+{% endblock%}

@@ -1,0 +1,1 @@
+SECRET_KEY = "5c76c116-1bd7-490d-902f-8a4a19ec34e9"

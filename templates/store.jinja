@@ -1,0 +1,16 @@
+{% extends "base.jinja" %}
+
+{% block title %}
+Store
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <h1 class="title">Welcome to {{ session['player_info']['current_airport'] }} store.</h1>
+    <img src="{{ url_for('static', filename='welcome.webp') }}" alt="store-welcome" style="width: 440px;">
+    <div class="store-buttons">
+        <a href="{{ url_for('buy') }}" class="btn">Buy</a>
+        <a href="{{ url_for('sell') }}" class="btn">Sell</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <title>
+    {% block title %}
+    {% endblock %}
+    </title>
+</head>
+<body>
+    <nav class="nav-bar">
+        <a href="{{ url_for('index') }}">Home</a>
+        {% if session["player_info"] %}
+        <a href="{{ url_for('info') }}">Info</a>
+        <a href="{{ url_for('travel') }}">Travel</a>
+        <a href="{{ url_for('store') }}">Store</a>
+        <a href="{{ url_for('logout') }}">Log Out</a>
+        {% endif %}
+    </nav>
+    <div class="content">
+    {% block content %}
+    {% endblock %}
+    </div>
+</body>
+</html>
